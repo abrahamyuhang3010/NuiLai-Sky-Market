@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#090d12" />
+    <title>牛来 · Sky Market</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css?v=20260903-14" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <a class="brand-lockup" href="#game" aria-label="返回牛来游戏">
+          <canvas class="brand-avatar" id="cowAvatar" width="72" height="72" aria-hidden="true"></canvas>
+          <span class="brand-copy"><strong>牛来</strong><small>SKY MARKET</small></span>
+        </a>
+        <div class="topbar-center" aria-label="闯关进度">
+          <span class="live-dot"></span><span>牛气币</span><strong id="coinValue">0000</strong><span class="topbar-separator">/</span><span>星级</span><strong id="starTotal">00</strong>
+        </div>
+        <div class="topbar-actions">
+          <button class="text-button" id="soundBtn" type="button" aria-label="切换声音" aria-pressed="true"><span class="speaker-icon" aria-hidden="true">◖</span><span id="soundLabel">声效开</span></button>
+          <button class="text-button" id="fullscreenBtn" type="button" aria-label="切换全屏"><span class="fullscreen-icon" aria-hidden="true">⛶</span><span>全屏</span></button>
+        </div>
+      </header>
+
+      <section class="arcade-header" aria-label="关卡信息">
+        <div class="arcade-title"><span class="eyebrow">LEVEL <b id="cabinetNumber">01</b></span><h1 id="levelName">开盘试水</h1></div>
+        <div class="arcade-meta"><span class="level-copy">STAGE <strong id="levelNumber">01</strong></span></div>
+      </section>
+
+      <section class="arcade-cabinet" id="game">
+        <div class="cabinet-topline"><span>NIU / CNY</span><span>READY <span class="blink">●</span></span></div>
+        <div class="screen-frame">
+          <div class="screen-hud" aria-label="实时游戏数据">
+            <div class="hud-block hud-price">
+              <span class="hud-label">MARKET PRICE</span>
+              <strong id="priceValue">¥100.00</strong>
+              <span class="hud-change positive" id="priceChange">+0.0%</span>
+            </div>
+            <div class="hud-block hud-position">
+              <span class="hud-label">POSITION</span>
+              <strong><span id="holdingValue">04</span><small> 股</small></strong>
+              <span class="hud-subline">价值 <b id="marketValue">¥400.00</b></span>
+            </div>
+            <div class="hud-block hud-return">
+              <span class="hud-label">RUN P&amp;L</span>
+              <strong class="positive" id="returnValue">+0.0%</strong>
+              <span class="hud-subline">浮动 <b class="positive" id="pnlValue">+¥0.00</b></span>
+            </div>
+            <div class="hud-block hud-target">
+              <span class="hud-label">TARGET</span>
+              <strong id="targetValue">+6%</strong>
+              <div class="hud-target-track"><span id="missionFill"></span><i></i></div>
+            </div>
+            <canvas id="miniChart" width="140" height="44" aria-hidden="true"></canvas>
+          </div>
+
+          <div class="canvas-wrap">
+            <canvas id="gameCanvas" width="960" height="540" aria-label="牛来飞行关卡"></canvas>
+            <output id="gameDebug" hidden aria-hidden="true"></output>
+            <div class="canvas-status" id="canvasStatus" aria-live="polite"><span class="status-dot"></span><span id="canvasStatusText">等待起飞</span></div>
+            <div class="event-ticker" id="eventTicker" aria-live="polite"><span>下一风险</span><strong id="eventText">追高陷阱</strong></div>
+            <div class="stage-overlay" id="stageOverlay">
+              <canvas class="cow-portrait" id="cowPortrait" width="192" height="192" aria-hidden="true"></canvas>
+              <div class="overlay-kicker" id="stageKicker">LEVEL 01 / 开盘试水</div>
+              <h2 id="stageTitle">开盘试水</h2>
+              <p id="stageDescription">避开追高陷阱与恐慌抛售，用 BUY / SELL 把收益推过目标线。</p>
+              <button class="launch-button" id="launchBtn" type="button"><span class="launch-arrow" aria-hidden="true">↗</span><span id="launchLabel">开始第 1 关</span></button>
+              <div class="overlay-note">SPACE / ↑ 上升　·　↓ 加速下落</div>
+            </div>
+            <div class="finish-overlay" id="finishOverlay" role="dialog" aria-modal="true" aria-labelledby="finishTitle" aria-describedby="finishText" hidden>
+              <div class="overlay-kicker" id="finishKicker">RUN COMPLETE</div>
+              <h2 id="finishTitle">收益达标</h2>
+              <p id="finishText">你的曲线跑赢了市场。</p>
+              <div class="finish-scoreline"><div class="finish-metric" id="finishMetric">+6.0%</div><div class="finish-stars" id="finishStars" aria-label="本关星级">★☆☆</div></div>
+              <div class="finish-reward" id="finishReward">首通奖励 · 100 牛气币</div>
+              <div class="finish-actions">
+                <button class="launch-button" id="retryBtn" type="button"><span class="launch-arrow" aria-hidden="true">↻</span><span id="retryLabel">重试本关</span></button>
+                <button class="secondary-button" id="levelSelectBtn" type="button">返回选关</button>
+              </div>
+              <div class="recovery-actions">
+                <button class="text-action" id="rerollBtn" type="button" hidden>更换行情</button>
+                <button class="text-action" id="steadyBtn" type="button" hidden>开启稳健模式</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="screen-footer">
+            <div class="footer-stat"><span class="footer-key">DISTANCE</span><strong id="distanceValue">1000m</strong></div>
+            <div class="footer-center"><div class="footer-track"><span id="levelProgress"></span></div><span id="marketStateText">市场平稳</span></div>
+            <div class="footer-stat footer-stat-right"><span class="footer-key">CASH</span><strong id="cashValue">¥0.00</strong></div>
+          </div>
+        </div>
+
+        <div class="cabinet-controlbar">
+          <div class="control-legend"><span><i class="legend-dot legend-up"></i>上升</span><span><i class="legend-dot legend-down"></i>下落</span></div>
+          <div class="control-center"><span class="control-led"></span><span class="control-label">FLIGHT PATH</span><span class="control-led"></span></div>
+          <div class="control-hint"><span class="keycap">SPACE</span><span class="keycap">↑</span></div>
+        </div>
+      </section>
+
+      <div class="touch-controls" aria-label="触控飞行控制">
+        <button class="touch-control touch-up" id="touchUp" type="button"><span class="touch-icon" aria-hidden="true">↑</span><span>上升</span><small>HOLD</small></button>
+        <button class="touch-control touch-down" id="touchDown" type="button"><span class="touch-icon" aria-hidden="true">↓</span><span>下落</span><small>HOLD</small></button>
+      </div>
+
+      <section class="after-game" id="levelMap" aria-label="关卡与任务信息">
+        <div class="after-heading"><span class="eyebrow">MARKET ROUTE</span><span class="after-rule"></span><span class="after-index" id="afterIndex">01 / 10</span></div>
+        <nav class="level-map" id="levelMapList" aria-label="选择关卡"></nav>
+        <div class="briefing-grid">
+          <section class="briefing-panel mission-panel">
+            <div class="panel-heading"><span id="missionHeading">本关任务</span><span class="panel-mark">◎</span></div>
+            <div class="mission-copy"><strong id="missionTitle">开盘试水</strong><span id="missionDescription">掌握飞行与基础交易</span><em id="missionTarget">+6%</em></div>
+            <div class="mission-readout"><span id="missionCurrent">当前 +0.0%</span><span id="missionTargetText">目标线 +6.0%</span></div>
+          </section>
+          <section class="briefing-panel signal-panel">
+            <div class="panel-heading"><span>市场模块</span><span class="panel-mark">↯</span></div>
+            <div class="signal-list" id="signalList">
+              <div class="signal-row signal-buy"><span class="signal-icon">↑</span><span><strong>BUY</strong></span><em>等待信号</em></div>
+              <div class="signal-row signal-sell"><span class="signal-icon">↓</span><span><strong>SELL</strong></span><em>等待信号</em></div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <footer class="page-footer"><span>牛来 · SKY MARKET</span><span>10 STAGES</span></footer>
+    </main>
+    <script src="game.js?v=20260903-14"></script>
+  </body>
+</html>
